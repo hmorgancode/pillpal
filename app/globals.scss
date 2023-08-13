@@ -1,0 +1,77 @@
+/* © South Hampton Oats */
+/* https://tailwindcss.com/docs/preflight */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  overflow-y: scroll;
+  background-color: var(--ba-dark-grey);
+  /* scroll-padding-top: 44px; */
+}
+@supports (scrollbar-gutter: stable) {
+  body {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    scroll-behavior: smooth;
+  }
+}
+
+// :root {
+  // --header-height-mobile: 44px;
+  // --header-height-desktop: 80px;
+// }
+
+#corny-captcha {
+  .corny-captcha-container {
+    font-family: helvetica,arial,sans-serif;
+    width: 100%;
+    max-width: 24rem;
+    padding: 7px;
+    border-width: 2px;
+  }
+  .corny-captcha-prompt {
+    font-size: 14px;
+  }
+  .prompt-key-word {
+    font-size: 38px;
+    font-weight: 700;
+  }
+  .corny-captcha-squares {
+    grid-template-columns: 1fr 2px 1fr 2px 1fr 2px 1fr;
+    grid-template-rows: 1fr 2px 1fr 2px 1fr 2px 1fr;
+    grid-template-areas:
+      "s1 g1 s2 g2 s3 g3 s4"
+      "g4 g4 g4 g4 g4 g4 g4"
+      "s5 g5 s6 g6 s7 g7 s8"
+      "g8 g8 g8 g8 g8 g8 g8"
+      "s9 g9 s10 g10 s11 g11 s12"
+      "g12 g12 g12 g12 g12 g12 g12"
+      "s13 g13 s14 g14 s15 g15 s16";
+  }
+  .captcha-img-backup-bg {
+    z-index: 0;
+  }
+  .captcha-separator {
+    margin-top: 7px;
+    border-style: solid;
+    border-top: 1px solid #dfdfdf;
+  }
+  @media only screen and (min-width: 320px) and (max-width: 331px) {
+    .toggle-button {
+      width: 9rem;
+    }
+  }
+  .cover-transition-in {
+    opacity: 0;
+    transition: opacity 0.69s ease-out;
+  }
+  .captcha-cover {
+    opacity: 0.25;
+    z-index: 3;
+  }
+}

@@ -1,0 +1,119 @@
+# run linter, unit tests (w/ code coverage), and ubuntu end-to-end tests.
+name: Push CI
+on:
+  push:
+    branches-ignore: ["dependabot/**"]
+jobs:
+  lint:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - uses: hmorgancode/use-npmrc@main
+        with:
+          dot-npmrc: ${{ secrets.NPMRC }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+
+  unit_test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - uses: hmorgancode/use-npmrc@main
+        with:
+          dot-npmrc: ${{ secrets.NPMRC }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest
+        run: npm run test
+      # - name: Upload coverage reports to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     directory: .jest-coverage/
+      #     flags: unit-tests
+
+  wait_for_vercel:
+    name: Wait for Vercel deploy
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_url: ${{ steps.get-vercel-deploy.outputs.deploymentUrl }}
+    steps:
+      - name: Get Vercel deploy URL
+        id: get-vercel-deploy
+        uses: hmorgancode/github-action-get-vercel-deploy-url-from-push-or-pr@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        with:
+          delay-fetch-ms: 2200
+      - name: Wait for Vercel deployment
+        id: await-vercel-deploy
+        uses: hmorgancode/github-action-await-vercel@main
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        with:
+          deployment-url: ${{ steps.get-vercel-deploy.outputs.deploymentUrl }}
+          timeout: 300 # seconds
+          interval: 3000 # ms
+      - name: Fail on Vercel build error
+        if: ${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).readyState != 'READY' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Vercel build failed.')
+      - name: Log deployment status
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.notice('${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).url }}', { title: 'Deployment URL' })
+            core.info('Deployment URL: https://${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).url }}')
+            core.notice('${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).inspectorUrl }}', { title: 'Deployment Overview' })
+            core.info('Deployment Overview: ${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).inspectorUrl }}')
+
+  end_to_end_test:
+    # if: ${{ false }}
+    needs: wait_for_vercel
+    name: e2e ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.35.1
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ['desktop-chromium', 'desktop-webkit'] #, 'desktop-firefox'] #, 'mobile-chromium', 'mobile-webkit']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+      - uses: hmorgancode/use-npmrc@main
+        with:
+          dot-npmrc: ${{ secrets.NPMRC }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Playwright
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ needs.wait_for_vercel.outputs.deploy_url }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:          
+          name: e2e-report-${{ matrix.project }}-ubuntu
+          path: playwright/test-results/
+          if-no-files-found: 'ignore'
+          retention-days: 30
