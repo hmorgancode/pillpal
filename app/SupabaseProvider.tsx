@@ -4,7 +4,9 @@ import { createContext, useContext, useState, ReactNode, ReactElement, useEffect
 import { useRouter } from 'next/navigation';
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { Database } from '@/lib/database.types';
+// import type { Database } from '@/lib/database.types';
+type Database = any;
+
 
 type MaybeSession = Session | null;
 

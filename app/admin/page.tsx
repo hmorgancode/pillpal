@@ -6,7 +6,8 @@ import { cookies } from 'next/headers';
 
 import { MedInput } from './MedInput';
 
-import type { Database } from '@/lib/database.types';
+// import type { Database } from '@/lib/database.types';
+type Database = any;
 
 // do not cache this page
 export const revalidate = 0;

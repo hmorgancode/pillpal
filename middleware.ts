@@ -1,8 +1,8 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'; // load this before NextResponse/NextRequest or there will be build errors
 import { NextResponse, userAgent } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { Database } from './lib/database.types';
-
+// import { Database } from './lib/database.types';
+type Database = any;
 
 export async function middleware(req: NextRequest) : Promise<NextResponse> {
   const { isBot } = userAgent(req);

@@ -15,8 +15,8 @@ import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import captchaPic1 from '@/public/assets/captcha/cap_1.jpg';
-import captchaPic2 from '@/public/assets/captcha/cap_2.jpg';
+// import captchaPic1 from '@/public/assets/captcha/cap_1.jpg';
+// import captchaPic2 from '@/public/assets/captcha/cap_2.jpg';
 
 const NUM_GAPS = 15;
 const NUM_SQUARES = 16;
@@ -97,7 +97,8 @@ export default function CornyCaptcha({ captchaIsValid, setCaptchaIsValid } : Cor
                 <Image
                   className="captcha-img-cat"
                   style={{ zIndex: userIsACatPerson ? 1 : 0 }}
-                  src={captchaPic1}
+                  // src={captchaPic1}
+                  src="/assets/foo"
                   alt="Some cute cats"
                   placeholder="blur"
                   fill={true}
@@ -110,7 +111,8 @@ export default function CornyCaptcha({ captchaIsValid, setCaptchaIsValid } : Cor
                 <Image
                   className="captcha-img-dog"
                   style={{ zIndex: userIsACatPerson ? 0 : 1 }}
-                  src={captchaPic2}
+                  // src={captchaPic2}
+                  src="/assets/foo"
                   alt="Some cute dogs"
                   placeholder="blur"
                   fill={true}

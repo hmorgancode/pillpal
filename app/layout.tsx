@@ -9,7 +9,8 @@ import { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Staatliches } from 'next/font/google';
 import { SupabaseProvider } from './SupabaseProvider';
 
-import type { Database } from '@/lib/database.types';
+// import type { Database } from '@/lib/database.types';
+type Database = any;
 
 export const metadata: Metadata = {
   title: {

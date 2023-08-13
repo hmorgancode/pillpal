@@ -6,7 +6,7 @@ import 'server-only';
 
 // import { Inter } from 'next/font/google';
 
-import type { Database } from '@/lib/database.types';
+// import type { Database } from '@/lib/database.types';
 
 // do not cache this page
 export const revalidate = 0;

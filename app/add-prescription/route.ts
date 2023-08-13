@@ -4,7 +4,8 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers';
 
-import type { Database } from '@/lib/database.types';
+// import type { Database } from '@/lib/database.types';
+type Database = any;
 
 export async function GET() {
   const supabase = createRouteHandlerClient<Database>({ cookies });
