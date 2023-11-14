@@ -70,12 +70,12 @@ jobs:
           interval: 3000 # ms
       - name: Fail on Vercel build error
         if: ${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).readyState != 'READY' }}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('Vercel build failed.')
       - name: Log deployment status
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             core.notice('${{ fromJson(steps.await-vercel-deploy.outputs.deploymentDetails).url }}', { title: 'Deployment URL' })
